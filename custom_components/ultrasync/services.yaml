@@ -10,13 +10,13 @@ disarm:
   description: Set Alarm to Disarmed
 
 fire:
-  description: Set Alarm to Fire Alarm
+  description: Set Alarm to Fire Alarm. Rejected when the panel does not explicitly support it.
 
 medical:
-  description: Set Alarm to Medical Alarm
+  description: Set Alarm to Medical Alarm. Rejected when the panel does not explicitly support it.
 
 panic:
-  description: Set Alarm to Panic Alarm
+  description: Set Alarm to Panic Alarm. Rejected when the panel does not explicitly support it.
 
 bypass:
   description: Bypass a zone

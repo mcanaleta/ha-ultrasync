@@ -9,6 +9,11 @@
 
 Interlogix ZeroWire and Hills ComNav (NX-595E) UltraSync Security Panel for Integration for Home Assistant Community Store (HACS)
 
+> **Modernization beta:** this fork adds a native `alarm_control_panel` for each
+> area and a `binary_sensor` for each zone. Existing text sensors and actions are
+> retained for compatibility. Emergency actions are rejected unless the detected
+> panel family explicitly supports them. See [MODERNIZATION.md](MODERNIZATION.md).
+
 This is based on a [a Pull Request I created here](https://github.com/home-assistant/core/pull/42549) to implement [my version of a UltraSync security panel](https://github.com/caronc/ultrasync) into Home Assistant (HA).
 
 Unfortunately it's taking a little bit of time to get merged due to the significant backlog the HA team already has to deal with. The request comes from [a thread within the HA Community Forum](https://community.home-assistant.io/t/interlogix-ultrasync/51464) asking for it's support.
@@ -76,7 +81,7 @@ When an Zone or Sensor changes it's state an event usable for automation is trig
 
 Possible events are:
 
-- `ultrasync_sensor_update`: The event includes the sensor no, name, and new status it changed to.
+- `ultrasync_zone_update`: The event includes the sensor no, name, and new status it changed to.
 - `ultrasync_area_update`: The event includes the area no, name, and new status it changed to (if it did).
 
 **Note**: Areas are sent periodic heartbeats with Interlogix devices in which case the state will not change at all.
@@ -87,7 +92,7 @@ Example automation to send a message via [Apprise](https://www.home-assistant.io
 - alias: House Movement
   trigger:
     platform: event
-    event_type: ultrasync_sensor_update
+    event_type: ultrasync_zone_update
   action:
     service: notify.apprise
     data:
@@ -107,6 +112,10 @@ Available services:
 - `disarm`: Disarm the alarm
 - `bypass`: Bypasses a specified Zone
 - `switch`: Activates an Output Control entity
+
+`medical`, `fire`, and `panic` are currently supported only on panel families
+that explicitly advertise those commands. On XGen, XGen8, and ZeroWire they are
+rejected without sending a request to the panel.
 
 As an example you may want to `arm` your alarm in `stay` mode each night and disarm it in the morning like so:
 

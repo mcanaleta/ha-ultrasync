@@ -1,7 +1,9 @@
 """Config flow for the Interlogix/Hills ComNav UltraSync Hub."""
-import logging
-from typing import Any, Dict, Optional
 
+import logging
+from typing import Any
+
+import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.const import (
     CONF_HOST,
@@ -10,13 +12,16 @@ from homeassistant.const import (
     CONF_SCAN_INTERVAL,
     CONF_USERNAME,
 )
-from homeassistant.core import callback, HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.typing import ConfigType
-import ultrasync
-import voluptuous as vol
 
-from .const import DEFAULT_NAME, DEFAULT_SCAN_INTERVAL
-from .const import DOMAIN  # pylint: disable=unused-import
+import ultrasync
+
+from .const import (
+    DEFAULT_NAME,
+    DEFAULT_SCAN_INTERVAL,
+    DOMAIN,  # pylint: disable=unused-import
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -25,7 +30,7 @@ class AuthFailureException(IOError):
     """A general exception we can use to track Authentication failures."""
 
 
-def validate_input(hass: HomeAssistant, data: dict) -> Dict[str, Any]:
+def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
     """Validate the user input allows us to connect."""
 
     usync = ultrasync.UltraSync(
@@ -54,8 +59,8 @@ class UltraSyncConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return UltraSyncOptionsFlowHandler(config_entry)
 
     async def async_step_user(
-        self, user_input: Optional[ConfigType] = None
-    ) -> Dict[str, Any]:
+        self, user_input: ConfigType | None = None
+    ) -> dict[str, Any]:
         """Handle user flow."""
         if self._async_current_entries():
             return self.async_abort(reason="single_instance_allowed")
@@ -101,7 +106,7 @@ class UltraSyncOptionsFlowHandler(config_entries.OptionsFlow):
         """Initialize options flow."""
         self.config_entry = config_entry
 
-    async def async_step_init(self, user_input: Optional[ConfigType] = None):
+    async def async_step_init(self, user_input: ConfigType | None = None):
         """Manage UltraSync options."""
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
