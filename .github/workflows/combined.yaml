@@ -1,31 +1,32 @@
-name: "Validation And Formatting"
+name: Validate integration
+
 on:
   push:
   pull_request:
-  schedule:
-    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
 jobs:
-  ci:
+  test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        name: Download repo
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          fetch-depth: 0
-      - uses: actions/setup-python@v2
-        name: Setup Python
-        with:
-          python-version: '3.8.x'
-      - uses: actions/cache@v2
-        name: Cache
-        with:
-          path: |
-            ~/.cache/pip
-          key: custom-component-ci
+          python-version: '3.14'
+      - run: pip install homeassistant==2026.10.0 pytest 'ultrasync @ https://github.com/mcanaleta/ultrasync/archive/394cb05e75eb1171518216a3059a20950d38a30d.zip'
+      - run: python -m pytest -q
+  hassfest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: home-assistant/actions/hassfest@master
+  hacs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - uses: hacs/action@main
         with:
-          CATEGORY: integration
-      - uses: KTibow/ha-blueprint@stable
-        name: CI
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          category: integration

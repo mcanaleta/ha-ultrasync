@@ -7,5 +7,7 @@
   "issue_tracker": "https://github.com/mcanaleta/ha-ultrasync/issues",
   "requirements": ["ultrasync @ https://github.com/mcanaleta/ultrasync/archive/394cb05e75eb1171518216a3059a20950d38a30d.zip"],
   "codeowners": ["@mcanaleta"],
-  "config_flow": true
+  "config_flow": true,
+  "after_dependencies": ["dhcp"],
+  "dhcp": [{"registered_devices": true}]
 }
