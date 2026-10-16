@@ -67,6 +67,8 @@ class UltraSyncConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             mac = normalize_mac(discovery_info.macaddress)
         except vol.Invalid:
             return self.async_abort(reason="not_configured")
+        if mac:
+            await self.async_set_unique_id(mac)
         for entry in self._async_current_entries():
             if (
                 entry.source == config_entries.SOURCE_IGNORE
