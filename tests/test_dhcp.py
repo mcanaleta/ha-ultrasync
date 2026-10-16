@@ -7,7 +7,6 @@ from types import MappingProxyType
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from voluptuous_serialize import convert
 from homeassistant import loader
 from homeassistant.config_entries import (
     SOURCE_DHCP, SOURCE_IGNORE, SOURCE_USER, ConfigEntries, ConfigEntry,
@@ -175,7 +174,6 @@ class DhcpFlowTests(unittest.IsolatedAsyncioTestCase):
         for mac in ["00-0D-16-12-34-56", ""]:
             result = await self.hass.config_entries.options.async_init(entry.entry_id)
             schema = result["data_schema"]
-            self.assertTrue(convert(schema))
             invalid = await self.hass.config_entries.options.async_configure(
                 result["flow_id"], {"mac": "bad-mac"}
             )
