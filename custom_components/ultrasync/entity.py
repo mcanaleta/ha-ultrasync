@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DEFAULT_NAME, DOMAIN
 from .coordinator import UltraSyncDataUpdateCoordinator
+from .discovery import configured_mac
 
 
 class UltraSyncEntity(CoordinatorEntity[UltraSyncDataUpdateCoordinator]):
@@ -25,3 +27,5 @@ class UltraSyncEntity(CoordinatorEntity[UltraSyncDataUpdateCoordinator]):
             model=str(getattr(coordinator.hub, "vendor", "UltraSync")),
             sw_version=sw_version or None,
         )
+        if mac := configured_mac(entry):
+            self._attr_device_info["connections"] = {(CONNECTION_NETWORK_MAC, mac)}

@@ -44,6 +44,20 @@ Go to the integrations page in your configuration and click on new **Integration
 
 **Note**: You can only be logged into the ZeroWire/UltraSync hub with the same user once; a subsequent login with the same user logs out the other. Since Home Assistant (HA) actively polls and maintains a login session to this Hub, it can prevent you from being able to log into at the same time elsewhere (via it's website). It is strongly recommended that you create a second user account on your Hub dedicated for just HA.
 
+### Automatic IP updates
+
+For an existing panel, open **Configure** on the UltraSync integration and enter
+its network interface's MAC address from your router's client list (for example,
+`00:0d:16:12:34:56`). You can also provide this optional address during setup.
+Home Assistant registers the panel's MAC and uses its standard DHCP discovery
+to update the connection when that same device receives another IPv4 address.
+Credentials, entities and automations are preserved. No panel commands are sent
+by discovery, and unknown devices are not probed with your credentials.
+
+DHCP announcements must be visible to Home Assistant; discovery across isolated
+networks depends on the network configuration. Configured DNS names are kept
+unchanged. Clear the MAC field to disable automatic IP updates.
+
 ### Sensor
 
 Sensors are dynamically generated on the fly.

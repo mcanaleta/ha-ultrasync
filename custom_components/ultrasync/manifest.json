@@ -1,11 +1,23 @@
 {
   "domain": "ultrasync",
   "name": "UltraSync Alarm Panel",
-  "iot_class": "local_polling",
-  "version": "2.0.0b1",
+  "after_dependencies": [
+    "dhcp"
+  ],
+  "codeowners": [
+    "@mcanaleta"
+  ],
+  "config_flow": true,
+  "dhcp": [
+    {
+      "registered_devices": true
+    }
+  ],
   "documentation": "https://github.com/mcanaleta/ha-ultrasync",
+  "iot_class": "local_polling",
   "issue_tracker": "https://github.com/mcanaleta/ha-ultrasync/issues",
-  "requirements": ["ultrasync @ https://github.com/mcanaleta/ultrasync/archive/394cb05e75eb1171518216a3059a20950d38a30d.zip"],
-  "codeowners": ["@mcanaleta"],
-  "config_flow": true
+  "requirements": [
+    "ultrasync@https://github.com/mcanaleta/ultrasync/archive/394cb05e75eb1171518216a3059a20950d38a30d.zip"
+  ],
+  "version": "2.0.0b1"
 }
