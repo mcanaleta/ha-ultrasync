@@ -1,5 +1,5 @@
 {
-    "name": "UltraSync",
-    "render_readme": true,
-    "homeassistant": "2026.8.0"
+  "name": "UltraSync Alarm Panel",
+  "render_readme": true,
+  "homeassistant": "2026.10.0"
 }

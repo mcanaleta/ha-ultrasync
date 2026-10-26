@@ -19,5 +19,5 @@
   "requirements": [
     "ultrasync@https://github.com/mcanaleta/ultrasync/archive/394cb05e75eb1171518216a3059a20950d38a30d.zip"
   ],
-  "version": "2.0.0b1"
+  "version": "2.0.0"
 }

@@ -1,3 +1,13 @@
+# Personal maintenance fork
+
+Maintained at [mcanaleta/ha-ultrasync](https://github.com/mcanaleta/ha-ultrasync).
+
+Add this repository to HACS as a custom **Integration** repository and download
+the latest release. It includes verified DHCP address recovery while preserving
+existing configuration entries, devices and entity IDs. Home Assistant
+2026.10.0 or later is required. Restart Home Assistant after installation.
+Do not delete or recreate the existing integration when switching repositories.
+
 # UltraSync Integration for Home Assistant
 
 [![Paypal](https://img.shields.io/badge/paypal-donate-green.svg)](https://paypal.me/lead2gold)
