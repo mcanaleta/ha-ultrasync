@@ -8,25 +8,33 @@
           "name": "[%key:common::config_flow::data::name%]",
           "host": "[%key:common::config_flow::data::host%]",
           "username": "[%key:common::config_flow::data::username%]",
-          "pin": "[%key:common::config_flow::data::pin%]"
+          "pin": "[%key:common::config_flow::data::pin%]",
+          "mac": "Panel MAC address (optional, enables automatic IP updates)"
         }
       }
     },
     "error": {
-      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]"
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+      "invalid_mac": "Enter a valid MAC address."
     },
     "abort": {
       "single_instance_allowed": "[%key:common::config_flow::abort::single_instance_allowed%]",
-      "unknown": "[%key:common::config_flow::error::unknown%]"
+      "unknown": "[%key:common::config_flow::error::unknown%]",
+      "already_configured": "The panel is already configured.",
+      "not_configured": "This device is not bound to a configured panel."
     }
   },
   "options": {
     "step": {
       "init": {
         "data": {
-          "scan_interval": "Update frequency (seconds)"
+          "scan_interval": "Update frequency (seconds)",
+          "mac": "Panel MAC address (optional, enables automatic IP updates)"
         }
       }
+    },
+    "error": {
+      "invalid_mac": "Enter a valid MAC address."
     }
   }
 }

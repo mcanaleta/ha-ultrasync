@@ -7,12 +7,14 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.const import (
     CONF_HOST,
+    CONF_MAC,
     CONF_NAME,
     CONF_PIN,
     CONF_SCAN_INTERVAL,
     CONF_USERNAME,
 )
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.service_info.dhcp import DhcpServiceInfo
 from homeassistant.helpers.typing import ConfigType
 
 import ultrasync
@@ -22,6 +24,7 @@ from .const import (
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,  # pylint: disable=unused-import
 )
+from .discovery import configured_mac, dhcp_host, normalize_mac
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -58,6 +61,29 @@ class UltraSyncConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Get the options flow for this handler."""
         return UltraSyncOptionsFlowHandler(config_entry)
 
+    async def async_step_dhcp(self, discovery_info: DhcpServiceInfo):
+        """Recover an existing panel's IPv4 address using its bound MAC."""
+        try:
+            mac = normalize_mac(discovery_info.macaddress)
+        except vol.Invalid:
+            return self.async_abort(reason="not_configured")
+        if mac:
+            await self.async_set_unique_id(mac)
+        for entry in self._async_current_entries():
+            if (
+                entry.source == config_entries.SOURCE_IGNORE
+                or not mac
+                or configured_mac(entry) != mac
+            ):
+                continue
+            host = dhcp_host(entry.data[CONF_HOST], discovery_info.ip)
+            if host != entry.data[CONF_HOST]:
+                self.hass.config_entries.async_update_entry(
+                    entry, data={**entry.data, CONF_HOST: host}
+                )
+            return self.async_abort(reason="already_configured")
+        return self.async_abort(reason="not_configured")
+
     async def async_step_user(
         self, user_input: ConfigType | None = None
     ) -> dict[str, Any]:
@@ -69,9 +95,16 @@ class UltraSyncConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             try:
+                if CONF_MAC in user_input:
+                    user_input = {
+                        **user_input, CONF_MAC: normalize_mac(user_input[CONF_MAC])
+                    }
                 await self.hass.async_add_executor_job(
                     validate_input, self.hass, user_input
                 )
+
+            except vol.Invalid:
+                errors[CONF_MAC] = "invalid_mac"
 
             except AuthFailureException:
                 errors["base"] = "cannot_connect"
@@ -93,6 +126,7 @@ class UltraSyncConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Required(CONF_HOST): str,
                     vol.Required(CONF_USERNAME): str,
                     vol.Required(CONF_PIN): str,
+                    vol.Optional(CONF_MAC): str,
                 }
             ),
             errors=errors,
@@ -104,20 +138,34 @@ class UltraSyncOptionsFlowHandler(config_entries.OptionsFlow):
 
     def __init__(self, config_entry):
         """Initialize options flow."""
-        self.config_entry = config_entry
+        self.entry = config_entry
 
     async def async_step_init(self, user_input: ConfigType | None = None):
         """Manage UltraSync options."""
+        errors = {}
         if user_input is not None:
-            return self.async_create_entry(title="", data=user_input)
+            try:
+                if CONF_MAC in user_input:
+                    user_input = {
+                        **user_input, CONF_MAC: normalize_mac(user_input[CONF_MAC])
+                    }
+            except vol.Invalid:
+                errors[CONF_MAC] = "invalid_mac"
+            else:
+                return self.async_create_entry(
+                    title="", data={**self.entry.options, **user_input}
+                )
 
         options = {
             vol.Optional(
                 CONF_SCAN_INTERVAL,
-                default=self.config_entry.options.get(
+                default=self.entry.options.get(
                     CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
                 ),
             ): int,
+            vol.Optional(CONF_MAC, default=configured_mac(self.entry)): str,
         }
 
-        return self.async_show_form(step_id="init", data_schema=vol.Schema(options))
+        return self.async_show_form(
+            step_id="init", data_schema=vol.Schema(options), errors=errors
+        )

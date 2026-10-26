@@ -1,6 +1,5 @@
 {
     "name": "UltraSync",
-    "domains": ["alarm_control_panel", "binary_sensor", "sensor"],
     "render_readme": true,
     "homeassistant": "2026.8.0"
 }

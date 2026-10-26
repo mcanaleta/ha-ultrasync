@@ -2,10 +2,13 @@
     "config": {
         "abort": {
             "single_instance_allowed": "Already configured. Only a single configuration possible.",
-            "unknown": "Unexpected error"
+            "unknown": "Unexpected error",
+            "already_configured": "The panel is already configured.",
+            "not_configured": "This device is not bound to a configured panel."
         },
         "error": {
-            "cannot_connect": "Failed to connect"
+            "cannot_connect": "Failed to connect",
+            "invalid_mac": "Enter a valid MAC address."
         },
         "flow_title": "Interlogix UltraSync Hub: {name}",
         "step": {
@@ -14,7 +17,8 @@
                     "host": "Host",
                     "name": "Name",
                     "pin": "PIN Code",
-                    "username": "Username"
+                    "username": "Username",
+                    "mac": "Panel MAC address (optional, enables automatic IP updates)"
                 },
                 "title": "Connect to Informix UltraSync Hub"
             }
@@ -24,9 +28,13 @@
         "step": {
             "init": {
                 "data": {
-                    "scan_interval": "Update frequency (seconds)"
+                    "scan_interval": "Update frequency (seconds)",
+                    "mac": "Panel MAC address (optional, enables automatic IP updates)"
                 }
             }
+        },
+        "error": {
+            "invalid_mac": "Enter a valid MAC address."
         }
     }
 }
